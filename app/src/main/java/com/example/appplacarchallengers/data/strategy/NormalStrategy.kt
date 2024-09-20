@@ -1,0 +1,44 @@
+package com.example.appplacarchallengers.data.strategy
+
+import com.example.appplacarchallengers.data.Scoreboard
+
+class NormalStrategy : ScoringStrategy {
+    override fun getPoints(scoreboard: Scoreboard, time: Int): String {
+        return when(scoreboard.points[time]){
+            0 -> "00"
+            1 -> "15"
+            2 -> "30"
+            3 -> "40"
+            else -> ""
+        }
+    }
+
+    override fun score(scoreboard: Scoreboard, time: Int) : ScoringStrategy {
+        scoreboard.points[time]++;
+
+        // Team does not score a game
+        if (scoreboard.points[time] != 4)
+            return this
+
+        // Team scores
+        scoreboard.games[time]++
+
+        // Change ends
+        if ((scoreboard.games[time] + scoreboard.games[1-time])%2 == 1)
+            scoreboard.switched = 1 - scoreboard.switched
+
+        // Wins set regularly
+        if(scoreboard.games[time]-scoreboard.games[1-time] >= 2) {
+            scoreboard.points = arrayOf(0, 0)
+            return updateSets(scoreboard, time)
+        }
+
+        // Both are at 6 games, tiebreaker required
+        if (scoreboard.games[time] == scoreboard.games[1-time] )
+            return TiebreakerStrategy()
+
+        scoreboard.points = arrayOf(0, 0)
+        // Either 5 x 6 or 6 x 5
+        return this
+    }
+}

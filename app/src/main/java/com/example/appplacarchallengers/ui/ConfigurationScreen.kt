@@ -1,69 +1,67 @@
 package com.example.appplacarchallengers.ui
 
-import android.widget.EditText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.appplacarchallengers.R
-import com.example.appplacarchallengers.ui.theme.AppPlacarChallengersTheme
+import com.example.appplacarchallengers.components.AppButton
+import com.example.appplacarchallengers.data.DataSource
+
 
 @Composable
 fun ConfigurationScreen(
+    getValue: (Int) -> String,
+    onValueChange: (Int, String) -> Unit,
+    onStartMatchButton: () -> Unit = { },
     modifier: Modifier
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceAround
     ) {
+        DataSource.configurationOptions.forEach({ item ->
+            AppTextField(
+                value = getValue(item),
+                labelResourceId = item,
+                onValueChange = { onValueChange(item, it) }
+            )
+        })
 
-        AppTextField(
-            labelResourceId = R.string.TextField_match_name,
+        AppButton(
+            labelResourceId = R.string.button_start_match,
+            onClick = {
+                onStartMatchButton()
+            }
         )
-
-        HorizontalDivider()
-
-        AppTextField(
-            labelResourceId = R.string.TextField_player_a1,
-        )
-
-        AppTextField(
-            labelResourceId = R.string.TextField_player_a2,
-        )
-
-        AppTextField(
-            labelResourceId = R.string.TextField_player_b1,
-        )
-
-        AppTextField(
-            labelResourceId = R.string.TextField_player_b2,
-        )
-
-        HorizontalDivider()
     }
-
 }
 
 @Composable
 fun AppTextField(
+    value: String,
     labelResourceId: Int,
     onValueChange: (String) -> Unit = {_ -> },
     modifier: Modifier = Modifier
 ) {
     TextField(
-        value = stringResource(id = labelResourceId),
+        value = value,
+        label = { Text(stringResource(id = labelResourceId)) },
         onValueChange = { onValueChange(it) }
     )
-}
 
-@Preview
+}
+/*
+
 @Composable
 fun ConfigurationScreenPreview() {
     AppPlacarChallengersTheme {
@@ -72,4 +70,4 @@ fun ConfigurationScreenPreview() {
                 .fillMaxSize()
         )
     }
-}
+}*/

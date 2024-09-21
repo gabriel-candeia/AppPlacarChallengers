@@ -8,4 +8,5 @@
     <string name="TextField_player_a2">Player 2 - Team A</string>
     <string name="TextField_player_b1">Player 1 - Team B</string>
     <string name="TextField_player_b2">Player 2 - Team B</string>
+    <string name="button_start_match">Start Match</string>
 </resources>

@@ -6,7 +6,8 @@ import com.example.appplacarchallengers.data.strategy.ScoringStrategy
 import java.io.Serializable
 import java.util.Date
 
-data class Scoreboard(var matchName: String? = null, var hasTimer: Boolean? = null, var date: Date? = null, var gamesToSet: Int = 6, var totalSets: Int = 5) : Serializable {
+class Scoreboard(var hasTimer: Boolean? = null, var date: Date? = null, var gamesToSet: Int = 6, var totalSets: Int = 5) : Serializable {
+    var matchName: String = ""
     var scoringStrategy: ScoringStrategy = NormalStrategy()
     var teamNames: Array<String> = arrayOf("","")
     var playerNames: Array<Array<String>> = arrayOf(arrayOf("", ""), arrayOf("", ""))
@@ -36,7 +37,7 @@ data class Scoreboard(var matchName: String? = null, var hasTimer: Boolean? = nu
     }
 
     fun copy() : Scoreboard {
-        var answ: Scoreboard = Scoreboard(matchName, hasTimer, date, gamesToSet, totalSets)
+        var answ: Scoreboard = Scoreboard(hasTimer, date, gamesToSet, totalSets)
         answ.scoringStrategy = scoringStrategy
         answ.points = points.copyOf()
         answ.playerNames = playerNames.copyOf()

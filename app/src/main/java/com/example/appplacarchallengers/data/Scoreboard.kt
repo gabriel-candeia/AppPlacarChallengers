@@ -6,7 +6,7 @@ import com.example.appplacarchallengers.data.strategy.ScoringStrategy
 import java.io.Serializable
 import java.util.Date
 
-data class Scoreboard(var matchName: String, var hasTimer: Boolean, var date: Date, var gamesToSet: Int = 6, var totalSets: Int = 5) : Serializable {
+data class Scoreboard(var matchName: String? = null, var hasTimer: Boolean? = null, var date: Date? = null, var gamesToSet: Int = 6, var totalSets: Int = 5) : Serializable {
     var scoringStrategy: ScoringStrategy = NormalStrategy()
     var teamNames: Array<String> = arrayOf("","")
     var playerNames: Array<Array<String>> = arrayOf(arrayOf("", ""), arrayOf("", ""))
@@ -31,7 +31,7 @@ data class Scoreboard(var matchName: String, var hasTimer: Boolean, var date: Da
         if(gameEnded()) return
         scoringStrategy = scoringStrategy.score(this, time)
         if(gameEnded()) {
-            winningTeam = teamNames[time]
+            winningTeam = playerNames[time][0] + " e " + playerNames[time][1]
         }
     }
 

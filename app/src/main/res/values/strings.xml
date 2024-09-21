@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">AppPlacarChallengers</string>
+    <string name="button_new_match">New Match</string>
+    <string name="button_past_matches">Past Matches</string>
+    <string name="description_app_logo" />
+    <string name="TextField_match_name">Match name</string>
+    <string name="TextField_player_a1">Player 1 - Team A</string>
+    <string name="TextField_player_a2">Player 2 - Team A</string>
+    <string name="TextField_player_b1">Player 1 - Team B</string>
+    <string name="TextField_player_b2">Player 2 - Team B</string>
 </resources>

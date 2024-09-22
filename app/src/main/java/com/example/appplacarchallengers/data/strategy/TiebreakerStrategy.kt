@@ -16,6 +16,8 @@ class TiebreakerStrategy : ScoringStrategy {
 
         if (scoreboard.points[time] < 7 || scoreboard.points[time] - scoreboard.points[1-time] < 2) return this
 
+        for(i in 0..1)
+            scoreboard.setOverview[i].add(Pair<Int,Int>(scoreboard.games[i],scoreboard.points[i]))
         return updateSets(scoreboard, time)
     }
 }

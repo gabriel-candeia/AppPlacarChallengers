@@ -5,6 +5,9 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.example.appplacarchallengers.data.Scoreboard
+import com.example.appplacarchallengers.data.strategy.ScoringState
+import com.example.appplacarchallengers.data.strategy.ScoringStrategy
+import com.example.appplacarchallengers.data.strategy.toState
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -18,8 +21,11 @@ fun Scoreboard.toScoreboardEntity(): ScoreboardEntity = ScoreboardEntity(
         points = points.toList(),
         games = games.toList(),
         sets = sets.toList(),
+        setOverviewA = setOverview[0] + ongoingSetOverview(0),
+        setOverviewB = setOverview[1] + ongoingSetOverview(1),
         switched = switched,
-        winningTeam = winningTeam
+        winningTeam = winningTeam,
+        scoringStrategy = scoringStrategy.toState()
 )
 
 class IntListConverter {
@@ -52,6 +58,21 @@ class StringListConverter {
         }
 }
 
+class PairListConverter {
+        @TypeConverter
+        fun savePairList(list: List<Pair<Int, Int>>): String? {
+                return Gson().toJson(list)
+        }
+
+        @TypeConverter
+        fun getPairList(list: String): List<Pair<Int, Int>> {
+                return Gson().fromJson(
+                        list,
+                        object : TypeToken<List<Pair<Int,Int>>>() {}.type
+                )
+        }
+}
+
 
 @Entity
 data class ScoreboardEntity(
@@ -66,8 +87,12 @@ data class ScoreboardEntity(
         @field:TypeConverters(IntListConverter::class) var points: List<Int> = emptyList(),
         @field:TypeConverters(IntListConverter::class) var games: List<Int> = emptyList(),
         @field:TypeConverters(IntListConverter::class) var sets: List<Int> = emptyList(),
-        //var setOverview: List<Pair<List<Int>, List<Int>>> = emptyList<Pair<List<Int>, List<Int>>>(),
+
+        @field:TypeConverters(PairListConverter::class) var setOverviewA: List<Pair<Int, Int>> = emptyList<Pair<Int, Int>>(),
+        @field:TypeConverters(PairListConverter::class) var setOverviewB: List<Pair<Int, Int>> = emptyList<Pair<Int, Int>>(),
 
         var switched: Int = 0,
-        var winningTeam: String? = null
+        var winningTeam: String? = null,
+
+        var scoringStrategy: ScoringState
 )

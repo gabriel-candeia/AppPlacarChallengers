@@ -1,6 +1,6 @@
 package com.example.appplacarchallengers
 
-import android.util.Log
+//import com.example.appplacarchallengers.data.ScoreboardViewModelFactory
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -8,19 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
-//import com.example.appplacarchallengers.data.ScoreboardViewModelFactory
-import com.example.appplacarchallengers.data.db.ScoreboardDatabase
-import com.example.appplacarchallengers.data.db.ScoreboardRepository
 import com.example.appplacarchallengers.ui.ConfigurationScreen
 import com.example.appplacarchallengers.ui.HomeScreen
 import com.example.appplacarchallengers.ui.ScoreboardScreen
@@ -72,8 +64,9 @@ fun ChallengersApp(
                     getValue = { viewModel.getConfig(it) },
                     onValueChange = { key, value -> viewModel.setConfig(key,value) },
                     onStartMatchButton = {
-                        viewModel.createScoreboard()
-                        navController.navigate(ChallengersAppScreen.Scoreboard.name)
+                        if(viewModel.createScoreboard()) {
+                            navController.navigate(ChallengersAppScreen.Scoreboard.name)
+                        }
                     },
                     modifier = Modifier.fillMaxSize()
                 )
@@ -83,7 +76,7 @@ fun ChallengersApp(
                 ScoreboardScreen(
                     matchName = uiState.matchName,
                     getPlayerNames = {team, player ->  uiState.playerNames[team][player]},
-                    getPoints = { uiState.getPoints(it) },
+                    getPoints = { viewModel.getPoints(it) },
                     getGames = { uiState.games[it].toString() },
                     getSets = { uiState.sets[it].toString() },
                     onSaveButton = {viewModel.saveScoreboard() },
@@ -96,6 +89,10 @@ fun ChallengersApp(
             composable(route = ChallengersAppScreen.History.name) {
                 TestScreen(
                     items = savedScoreboardState,
+                    onEditButton = {
+                        viewModel.loadScoreboard(it)
+                        navController.navigate(ChallengersAppScreen.Scoreboard.name)
+                    },
                     onDeleteButton = {
                         viewModel.deleteScoreboard(it)
                         viewModel.getAllScoreboards()

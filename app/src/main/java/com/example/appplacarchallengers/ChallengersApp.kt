@@ -25,6 +25,7 @@ import com.example.appplacarchallengers.ui.ConfigurationScreen
 import com.example.appplacarchallengers.ui.HomeScreen
 import com.example.appplacarchallengers.ui.ScoreboardScreen
 import com.example.appplacarchallengers.ui.ScoreboardViewModel
+import com.example.appplacarchallengers.ui.TestScreen
 import com.example.appplacarchallengers.ui.theme.AppPlacarChallengersTheme
 
 enum class ChallengersAppScreen() {
@@ -45,6 +46,7 @@ fun ChallengersApp(
 
     ) { innerPadding ->
         val uiState by viewModel.scoreboardState.collectAsState()
+        val savedScoreboardState by viewModel.allScoreboards.collectAsState()
 
         NavHost(
             navController = navController,
@@ -57,6 +59,7 @@ fun ChallengersApp(
                         navController.navigate(ChallengersAppScreen.Configuration.name)
                     },
                     onPastMatchesButton = {
+                        viewModel.getAllScoreboards()
                         navController.navigate(ChallengersAppScreen.History.name)
                     },
                     modifier = Modifier
@@ -83,9 +86,16 @@ fun ChallengersApp(
                     getPoints = { uiState.getPoints(it) },
                     getGames = { uiState.games[it].toString() },
                     getSets = { uiState.sets[it].toString() },
+                    onSaveButton = {viewModel.saveScoreboard() },
                     onUndoButton = { viewModel.undo() },
                     onScoreButton = { viewModel.score(it) },
                     modifier = Modifier.fillMaxSize()
+                )
+            }
+
+            composable(route = ChallengersAppScreen.History.name) {
+                TestScreen(
+                    items = savedScoreboardState
                 )
             }
         }

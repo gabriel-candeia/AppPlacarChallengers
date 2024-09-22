@@ -50,6 +50,7 @@ fun ScoreboardScreen(
     getPoints: (Int) -> String,
     getGames: (Int) -> String,
     getSets: (Int) -> String,
+    onSaveButton: () -> Unit,
     onUndoButton: () -> Unit,
     onScoreButton: (Int) -> Unit,
     modifier: Modifier
@@ -66,7 +67,7 @@ fun ScoreboardScreen(
         )
 
         Row {
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = onSaveButton) {
                 Text("Save")
             }
 

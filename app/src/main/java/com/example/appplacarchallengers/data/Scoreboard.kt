@@ -38,12 +38,15 @@ class Scoreboard(var hasTimer: Boolean? = null, var date: Date? = null, var game
 
     fun copy() : Scoreboard {
         var answ: Scoreboard = Scoreboard(hasTimer, date, gamesToSet, totalSets)
+        answ.matchName = matchName
         answ.scoringStrategy = scoringStrategy
         answ.points = points.copyOf()
         answ.playerNames = playerNames.copyOf()
         answ.games = games.copyOf()
         answ.sets = sets.copyOf()
+        answ.setOverview = setOverview.copyOf()
         answ.switched = switched
+        answ.winningTeam =winningTeam
         return answ
     }
 

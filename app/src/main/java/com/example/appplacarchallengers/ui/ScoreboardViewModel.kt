@@ -1,5 +1,6 @@
 package com.example.appplacarchallengers.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.appplacarchallengers.data.Scoreboard
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,18 +11,21 @@ import androidx.lifecycle.viewModelScope
 import com.example.appplacarchallengers.R
 import com.example.appplacarchallengers.data.DataSource
 import com.example.appplacarchallengers.data.db.ScoreboardDao
+import com.example.appplacarchallengers.data.db.ScoreboardEntity
 import com.example.appplacarchallengers.data.db.ScoreboardRepository
 import com.example.appplacarchallengers.data.db.toScoreboardEntity
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ScoreboardViewModel(scoreboardDao: ScoreboardDao) : ViewModel() {
+class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
     private val _scoreboardStack = mutableListOf<Scoreboard>()
     private val _scoreboardState = MutableStateFlow(Scoreboard())
     val scoreboardState: StateFlow<Scoreboard> = _scoreboardState.asStateFlow()
 
-    var config: SnapshotStateMap<Int,String> = SnapshotStateMap<Int,String>()
+    private val _allScoreboards = MutableStateFlow<List<ScoreboardEntity>>(emptyList())
+    val allScoreboards: StateFlow<List<ScoreboardEntity>> = _allScoreboards.asStateFlow()
 
+    var config: SnapshotStateMap<Int,String> = SnapshotStateMap<Int,String>()
 
     fun getConfig(key: Int): String {
         return config.get(key) ?: ""
@@ -38,6 +42,10 @@ class ScoreboardViewModel(scoreboardDao: ScoreboardDao) : ViewModel() {
     fun createScoreboard() {
         _scoreboardState.update { currentState ->
             val newState = currentState.copy()
+            newState.matchName = getConfig(R.string.TextField_match_name)
+            newState.playerNames = arrayOf(
+                arrayOf(getConfig(R.string.TextField_player_a1),getConfig(R.string.TextField_player_a2)),
+                arrayOf(getConfig(R.string.TextField_player_b1),getConfig(R.string.TextField_player_b2)))
             newState
         }
     }
@@ -67,7 +75,15 @@ class ScoreboardViewModel(scoreboardDao: ScoreboardDao) : ViewModel() {
     fun saveScoreboard() {
         viewModelScope.launch {
             val scoreboardEntity = _scoreboardState.value.toScoreboardEntity()
-            //repository.saveScoreboard(scoreboardEntity)
+            scoreboardDao.insertScoreboard(scoreboardEntity)
+            Log.d("pdm","teste")
+        }
+    }
+
+    fun getAllScoreboards() {
+        viewModelScope.launch {
+            val scoreboards = scoreboardDao.getAllScoreboards()
+            _allScoreboards.update { scoreboards }
         }
     }
 }

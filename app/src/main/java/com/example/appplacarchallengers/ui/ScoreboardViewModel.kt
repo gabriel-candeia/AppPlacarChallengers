@@ -6,11 +6,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.lifecycle.viewModelScope
 import com.example.appplacarchallengers.R
 import com.example.appplacarchallengers.data.DataSource
+import com.example.appplacarchallengers.data.db.ScoreboardDao
+import com.example.appplacarchallengers.data.db.ScoreboardRepository
+import com.example.appplacarchallengers.data.db.toScoreboardEntity
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class ScoreboardViewModel : ViewModel() {
+class ScoreboardViewModel(scoreboardDao: ScoreboardDao) : ViewModel() {
     private val _scoreboardStack = mutableListOf<Scoreboard>()
     private val _scoreboardState = MutableStateFlow(Scoreboard())
     val scoreboardState: StateFlow<Scoreboard> = _scoreboardState.asStateFlow()
@@ -57,5 +62,12 @@ class ScoreboardViewModel : ViewModel() {
             newState
         }
         _scoreboardStack.removeAt(_scoreboardStack.size-1)
+    }
+
+    fun saveScoreboard() {
+        viewModelScope.launch {
+            val scoreboardEntity = _scoreboardState.value.toScoreboardEntity()
+            //repository.saveScoreboard(scoreboardEntity)
+        }
     }
 }

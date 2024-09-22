@@ -76,7 +76,12 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
         viewModelScope.launch {
             val scoreboardEntity = _scoreboardState.value.toScoreboardEntity()
             scoreboardDao.insertScoreboard(scoreboardEntity)
-            Log.d("pdm","teste")
+        }
+    }
+
+    fun deleteScoreboard(scoreboardEntity: ScoreboardEntity) {
+        viewModelScope.launch {
+            scoreboardDao.deleteScoreboard(scoreboardEntity)
         }
     }
 

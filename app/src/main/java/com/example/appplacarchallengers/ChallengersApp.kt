@@ -95,7 +95,11 @@ fun ChallengersApp(
 
             composable(route = ChallengersAppScreen.History.name) {
                 TestScreen(
-                    items = savedScoreboardState
+                    items = savedScoreboardState,
+                    onDeleteButton = {
+                        viewModel.deleteScoreboard(it)
+                        viewModel.getAllScoreboards()
+                    }
                 )
             }
         }

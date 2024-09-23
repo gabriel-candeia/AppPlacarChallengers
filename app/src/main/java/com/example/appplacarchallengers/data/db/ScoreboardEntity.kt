@@ -92,7 +92,7 @@ data class ScoreboardEntity(
         @field:TypeConverters(PairListConverter::class) var setOverviewB: List<Pair<Int, Int>> = emptyList<Pair<Int, Int>>(),
 
         var switched: Int = 0,
-        var winningTeam: String? = null,
+        var winningTeam: Int? = null,
 
         var scoringStrategy: ScoringState
 )

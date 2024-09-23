@@ -107,14 +107,13 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
             newState.hasTimer = it.hasTimer
             //date
 
-            val teste = arrayOf<Int>(it.points[0], it.points[1])
             newState.gamesToSet = it.gamesToSet
             newState.totalSets = it.totalSets
             newState.playerNames = arrayOf(
                 arrayOf(it.playerNames.get(0),it.playerNames.get(1)),
                 arrayOf(it.playerNames.get(2),it.playerNames.get(3)))
 
-            newState.points = teste
+            newState.points = arrayOf<Int>(it.points[0], it.points[1])
             newState.games = arrayOf(it.games[0],it.games[1])
             newState.sets = arrayOf(it.sets[0],it.sets[1])
             newState.switched = it.switched

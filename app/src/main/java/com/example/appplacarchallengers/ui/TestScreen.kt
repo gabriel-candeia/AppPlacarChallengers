@@ -1,11 +1,13 @@
 package com.example.appplacarchallengers.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -67,6 +70,7 @@ fun ScoreboardCardRow(
     namePlayer1: String,
     namePlayer2: String,
     setOverview: List<Pair<Int,Int>>,
+    isWinner: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -82,6 +86,11 @@ fun ScoreboardCardRow(
             Text(text = namePlayer1, textAlign = TextAlign.Center)
             Text(text = namePlayer2, textAlign = TextAlign.Center)
         }
+
+        if(isWinner) {
+            Icon(imageVector = Icons.Filled.EmojiEvents, contentDescription = "Winner")
+        }
+
         setOverview.forEach {
             var x: Int = it.second.toInt()
             var second: String? = if(x>=0) x.toString() else null
@@ -114,16 +123,18 @@ fun ScoreboardCard(
         ScoreboardCardRow(
             namePlayer1 = item.playerNames.get(0),
             namePlayer2 = item.playerNames.get(1),
-            setOverview = item.setOverviewA
+            setOverview = item.setOverviewA,
+            isWinner = item.winningTeam == 0
         )
 
         ScoreboardCardRow(
             namePlayer1 = item.playerNames.get(2),
             namePlayer2 = item.playerNames.get(3),
-            setOverview = item.setOverviewB
+            setOverview = item.setOverviewB,
+            isWinner = item.winningTeam == 1
         )
 
-        if (isExpanded) {
+        AnimatedVisibility (isExpanded) {
             Row(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
@@ -149,9 +160,6 @@ fun ScoreboardCard(
                 }
             }
         }
-        else {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
     }
 }
 
@@ -164,7 +172,7 @@ fun TestScreen(
 ){
     LazyColumn(
         modifier = modifier
-            .animateContentSize().padding(16.dp),
+            .fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -173,7 +181,8 @@ fun TestScreen(
             ScoreboardCard(
                 item = item,
                 onEditButton = { onEditButton(item) },
-                onDeleteButton = { onDeleteButton(item) })
+                onDeleteButton = { onDeleteButton(item) },
+                modifier = Modifier.animateItem())
         }
     }
 }

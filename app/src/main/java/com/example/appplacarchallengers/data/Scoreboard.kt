@@ -21,7 +21,7 @@ class Scoreboard(var hasTimer: Boolean? = null, var date: Date? = null, var game
     var setOverview: Array<MutableList<Pair<Int, Int>>> = arrayOf(mutableListOf<Pair<Int,Int>>(),mutableListOf<Pair<Int,Int>>())
 
     var switched: Int = 0
-    var winningTeam: String? = null
+    var winningTeam: Int? = null
 
     fun gameEnded(): Boolean {
         return scoringStrategy is EndgameStrategy
@@ -35,7 +35,7 @@ class Scoreboard(var hasTimer: Boolean? = null, var date: Date? = null, var game
         if(gameEnded()) return
         scoringStrategy = scoringStrategy.score(this, time)
         if(gameEnded()) {
-            winningTeam = playerNames[time][0] + " e " + playerNames[time][1]
+            winningTeam = time
         }
     }
 

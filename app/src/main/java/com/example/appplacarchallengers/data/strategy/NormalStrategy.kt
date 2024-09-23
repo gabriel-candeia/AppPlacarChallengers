@@ -34,7 +34,7 @@ class NormalStrategy : ScoringStrategy {
             scoreboard.points = arrayOf(0, 0)
             return updateSets(scoreboard, time)
         }
-        
+
         scoreboard.points = arrayOf(0, 0)
         // Both are at 6 games, tiebreaker required
         if (scoreboard.games[time] == scoreboard.games[1-time] )

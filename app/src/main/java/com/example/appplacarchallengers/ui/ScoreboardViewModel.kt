@@ -10,6 +10,7 @@ import com.example.appplacarchallengers.data.Scoreboard
 import com.example.appplacarchallengers.data.db.ScoreboardDao
 import com.example.appplacarchallengers.data.db.ScoreboardEntity
 import com.example.appplacarchallengers.data.db.toScoreboardEntity
+import com.example.appplacarchallengers.data.strategy.EndgameStrategy
 import com.example.appplacarchallengers.data.strategy.toStrategy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,6 +45,15 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
         config.clear()
     }
 
+    fun resetAll() {
+        resetConfig()
+        _scoreboardStack.clear()
+        _scoreboardState.update { currentState ->
+            val newState = Scoreboard()
+            newState
+        }
+    }
+
     fun createScoreboard() : Boolean {
         DataSource.configurationOptions.forEach({ if(config.get(it)==null) return false})
         _scoreboardStack.clear()
@@ -64,6 +74,8 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
     }
 
     fun score(team: Int) : Boolean{
+        if(_scoreboardState.value.scoringStrategy is EndgameStrategy)
+            return false
         _scoreboardStack.add(_scoreboardState.value)
         var switched = _scoreboardState.value.switched
         _scoreboardState.update { currentState ->
@@ -119,6 +131,7 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
             newState.points = arrayOf<Int>(it.points[0], it.points[1])
             newState.games = arrayOf(it.games[0],it.games[1])
             newState.sets = arrayOf(it.sets[0],it.sets[1])
+            newState.setOverview = arrayOf(it.setOverviewA.toMutableList(),it.setOverviewB.toMutableList())
             newState.switched = it.switched
             newState.winningTeam = it.winningTeam
 

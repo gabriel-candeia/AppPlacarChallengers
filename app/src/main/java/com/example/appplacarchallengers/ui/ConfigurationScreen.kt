@@ -1,13 +1,30 @@
 package com.example.appplacarchallengers.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.example.appplacarchallengers.R
 import com.example.appplacarchallengers.components.AppButton
 import com.example.appplacarchallengers.data.DataSource
@@ -20,23 +37,48 @@ fun ConfigurationScreen(
     onStartMatchButton: () -> Unit = { },
     modifier: Modifier
 ) {
+    val error = remember { mutableStateListOf<MutableState<Boolean>>() }
+
+    if(error.size != DataSource.configurationOptions.size) {
+        error.clear()
+        error.addAll(DataSource.configurationOptions.map { remember { mutableStateOf(false) } })
+    }
+
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        DataSource.configurationOptions.forEach({ item ->
+        DataSource.configurationOptions.forEachIndexed() { index, item ->
+            val flashColor by animateColorAsState(
+                targetValue = if (error[index].value) Color.Red else  TextFieldDefaults.colors().unfocusedContainerColor,
+                animationSpec = spring()
+            )
+
             AppTextField(
                 value = getValue(item),
                 labelResourceId = item,
-                onValueChange = { onValueChange(item, it) }
+                onValueChange = {
+                    error[index].value = false
+                    onValueChange(item, it) },
+                color = flashColor,
+                modifier = Modifier.fillMaxWidth()
             )
-        })
+        }
 
         AppButton(
             labelResourceId = R.string.button_start_match,
             onClick = {
-                onStartMatchButton()
+                var allFieldsValid = true
+                DataSource.configurationOptions.forEachIndexed { index, item ->
+                    if (getValue(item).isBlank()) {
+                        error[index].value = true
+                    }
+                    allFieldsValid = allFieldsValid && !error[index].value
+                }
+                if(allFieldsValid) {
+                    onStartMatchButton()
+                }
             }
         )
     }
@@ -47,14 +89,16 @@ fun AppTextField(
     value: String,
     labelResourceId: Int,
     onValueChange: (String) -> Unit = {_ -> },
+    color: Color,
     modifier: Modifier = Modifier
 ) {
     TextField(
+        colors = TextFieldDefaults.colors(focusedContainerColor = color, unfocusedContainerColor = color),
         value = value,
         label = { Text(stringResource(id = labelResourceId)) },
-        onValueChange = { onValueChange(it) }
+        onValueChange = { onValueChange(it) },
+        modifier = modifier
     )
-
 }
 
 /*

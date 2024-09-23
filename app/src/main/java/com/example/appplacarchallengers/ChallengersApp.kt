@@ -17,7 +17,7 @@ import com.example.appplacarchallengers.ui.ConfigurationScreen
 import com.example.appplacarchallengers.ui.HomeScreen
 import com.example.appplacarchallengers.ui.ScoreboardScreen
 import com.example.appplacarchallengers.ui.ScoreboardViewModel
-import com.example.appplacarchallengers.ui.TestScreen
+import com.example.appplacarchallengers.ui.HistoryScreen
 import com.example.appplacarchallengers.ui.theme.AppPlacarChallengersTheme
 
 enum class ChallengersAppScreen() {
@@ -46,6 +46,7 @@ fun ChallengersApp(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = ChallengersAppScreen.Home.name) {
+                viewModel.resetAll()
                 HomeScreen(
                     onNewMatchButton = {
                         navController.navigate(ChallengersAppScreen.Configuration.name)
@@ -87,9 +88,11 @@ fun ChallengersApp(
             }
 
             composable(route = ChallengersAppScreen.History.name) {
-                TestScreen(
+                viewModel.getAllScoreboards()
+                HistoryScreen(
                     items = savedScoreboardState,
                     onEditButton = {
+                        viewModel.resetAll()
                         viewModel.loadScoreboard(it)
                         navController.navigate(ChallengersAppScreen.Scoreboard.name)
                     },

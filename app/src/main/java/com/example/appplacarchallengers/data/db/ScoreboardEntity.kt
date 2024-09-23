@@ -21,8 +21,9 @@ fun Scoreboard.toScoreboardEntity(): ScoreboardEntity = ScoreboardEntity(
         points = points.toList(),
         games = games.toList(),
         sets = sets.toList(),
-        setOverviewA = setOverview[0] + ongoingSetOverview(0),
-        setOverviewB = setOverview[1] + ongoingSetOverview(1),
+        setOverviewA = setOverview[0],
+        setOverviewB = setOverview[1],
+        ongoingSetOverview = listOf(ongoingSetOverview(0),ongoingSetOverview(1)),
         switched = switched,
         winningTeam = winningTeam,
         scoringStrategy = scoringStrategy.toState()
@@ -90,6 +91,7 @@ data class ScoreboardEntity(
 
         @field:TypeConverters(PairListConverter::class) var setOverviewA: List<Pair<Int, Int>> = emptyList<Pair<Int, Int>>(),
         @field:TypeConverters(PairListConverter::class) var setOverviewB: List<Pair<Int, Int>> = emptyList<Pair<Int, Int>>(),
+        @field:TypeConverters(PairListConverter::class) var ongoingSetOverview: List<Pair<Int, Int>> = emptyList<Pair<Int, Int>>(),
 
         var switched: Int = 0,
         var winningTeam: Int? = null,

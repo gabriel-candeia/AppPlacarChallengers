@@ -38,6 +38,15 @@ fun ScoringState.toStrategy() : ScoringStrategy {
     }
 }
 
+fun ScoringState.description() : String {
+    return when(this) {
+        ScoringState.Normal -> "ongoing match"
+        ScoringState.Tiebreaker -> "tiebreaker"
+        ScoringState.Supertiebreaker -> "supertiebreaker"
+        else -> "game finished"
+    }
+}
+
 fun ScoringStrategy.toState() : ScoringState {
     return when (this) {
         is NormalStrategy -> ScoringState.Normal

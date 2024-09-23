@@ -27,8 +27,14 @@ class NormalStrategy : ScoringStrategy {
         if ((scoreboard.games[time] + scoreboard.games[1-time])%2 == 1)
             scoreboard.switched = 1 - scoreboard.switched
 
+        // Game does not decide set
+        if(scoreboard.games[time] < scoreboard.gamesToSet ){
+            scoreboard.points = arrayOf(0, 0)
+            return this
+        }
+
         // Wins set regularly
-        if(scoreboard.games[time] > scoreboard.gamesToSet && scoreboard.games[time]-scoreboard.games[1-time] >= 2) {
+        if(scoreboard.games[time]-scoreboard.games[1-time] >= 2) {
             for(i in 0..1)
                 scoreboard.setOverview[i].add(Pair<Int,Int>(scoreboard.games[i],-1))
             scoreboard.points = arrayOf(0, 0)

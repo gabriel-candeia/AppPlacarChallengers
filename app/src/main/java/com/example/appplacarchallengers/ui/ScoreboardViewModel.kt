@@ -28,6 +28,7 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
 
     var config: SnapshotStateMap<Int,String> = SnapshotStateMap<Int,String>()
 
+
     fun getConfig(key: Int): String {
         return config.get(key) ?: ""
     }
@@ -62,13 +63,15 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
         return _scoreboardState.value.getPoints(team)
     }
 
-    fun score(team: Int) {
+    fun score(team: Int) : Boolean{
         _scoreboardStack.add(_scoreboardState.value)
+        var switched = _scoreboardState.value.switched
         _scoreboardState.update { currentState ->
             val newState = currentState.copy()
             newState.score(team)
             newState
         }
+        return switched != _scoreboardState.value.switched
     }
 
     fun undo() {

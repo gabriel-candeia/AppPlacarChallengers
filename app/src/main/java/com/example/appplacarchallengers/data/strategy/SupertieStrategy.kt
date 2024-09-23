@@ -18,7 +18,7 @@ class SupertieStrategy : ScoringStrategy {
             return this
 
         for(i in 0..1)
-            scoreboard.setOverview[i].add(Pair<Int,Int>(scoreboard.games[i],scoreboard.points[i]))
+            scoreboard.setOverview[i].add(Pair<Int,Int>(scoreboard.games[i] + (i==time).toInt(),scoreboard.points[i]))
         return EndgameStrategy()
     }
 }

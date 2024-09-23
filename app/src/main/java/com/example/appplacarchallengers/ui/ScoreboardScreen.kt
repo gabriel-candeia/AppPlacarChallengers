@@ -1,11 +1,22 @@
 package com.example.appplacarchallengers.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Autorenew
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
@@ -52,9 +63,28 @@ fun ScoreboardScreen(
     getSets: (Int) -> String,
     onSaveButton: () -> Unit,
     onUndoButton: () -> Unit,
-    onScoreButton: (Int) -> Unit,
+    onScoreButton: (Int) -> Boolean,
     modifier: Modifier
 ) {
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    if(showDialog) {
+        AlertDialog(
+            icon = {
+                Icon(Icons.Filled.Autorenew,"")
+            },
+            title = {
+                Text("change ends")
+            },
+            confirmButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Confirm")
+                }
+            },
+            onDismissRequest = {  }
+        )
+    }
+
     Column {
         Text(text = matchName)
 
@@ -63,7 +93,7 @@ fun ScoreboardScreen(
             points = getPoints(0),
             games = getGames(0),
             sets = getSets(0),
-            onScoreButton = { onScoreButton(0) }
+            onScoreButton = { showDialog = onScoreButton(0) }
         )
 
         Row {
@@ -83,7 +113,7 @@ fun ScoreboardScreen(
             points = getPoints(1),
             games = getGames(1),
             sets = getSets(1),
-            onScoreButton = { onScoreButton(1) }
+            onScoreButton = { showDialog = onScoreButton(1) }
         )
     }
 }

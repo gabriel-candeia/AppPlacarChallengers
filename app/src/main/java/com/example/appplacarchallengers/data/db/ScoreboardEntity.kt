@@ -6,14 +6,13 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import com.example.appplacarchallengers.data.Scoreboard
 import com.example.appplacarchallengers.data.strategy.ScoringState
-import com.example.appplacarchallengers.data.strategy.ScoringStrategy
 import com.example.appplacarchallengers.data.strategy.toState
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
 fun Scoreboard.toScoreboardEntity(): ScoreboardEntity = ScoreboardEntity(
         matchName = matchName,
-        hasTimer = hasTimer,
+        timer = timer,
         date = 0,
         gamesToSet = gamesToSet,
         totalSets = totalSets,
@@ -26,7 +25,8 @@ fun Scoreboard.toScoreboardEntity(): ScoreboardEntity = ScoreboardEntity(
         ongoingSetOverview = listOf(ongoingSetOverview(0),ongoingSetOverview(1)),
         switched = switched,
         winningTeam = winningTeam,
-        scoringStrategy = scoringStrategy.toState()
+        scoringStrategy = scoringStrategy.toState(),
+        server = server
 )
 
 class IntListConverter {
@@ -78,11 +78,12 @@ class PairListConverter {
 @Entity
 data class ScoreboardEntity(
         @PrimaryKey(autoGenerate = true) val id: Long = 0,
-        var hasTimer: Boolean? = null,
+        var timer: Long? = null,
         var date: Long? = null, // Store date as milliseconds since epoch
         var gamesToSet: Int = 6,
         var totalSets: Int = 5,
         var matchName: String = "",
+        var server: Int = 0,
 
         @field:TypeConverters(StringListConverter::class) var playerNames: List<String> = emptyList(),
         @field:TypeConverters(IntListConverter::class) var points: List<Int> = emptyList(),

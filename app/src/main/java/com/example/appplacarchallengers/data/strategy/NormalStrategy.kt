@@ -27,6 +27,10 @@ class NormalStrategy : ScoringStrategy {
         if ((scoreboard.games[time] + scoreboard.games[1-time])%2 == 1)
             scoreboard.switched = 1 - scoreboard.switched
 
+        // Change server
+        scoreboard.server = 1-scoreboard.server
+
+
         // Game does not decide set
         if(scoreboard.games[time] < scoreboard.gamesToSet ){
             scoreboard.points = arrayOf(0, 0)

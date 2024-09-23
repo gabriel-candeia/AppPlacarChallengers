@@ -1,5 +1,6 @@
 package com.example.appplacarchallengers.ui
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -12,8 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -158,6 +159,15 @@ fun ScoreboardCard(
                     }
                     append(item.totalSets.toString())
                 })
+
+                if(item.timer!=null) {
+                    Text(text = buildAnnotatedString {
+                        withStyle(style = style) {
+                            append("Timer: ")
+                        }
+                        append(item.timer?.formatTime())
+                    })
+                }
             }
         }
 
@@ -221,6 +231,7 @@ fun HistoryScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(items) { item ->
+            Log.d("pdm",item.timer.toString())
             ScoreboardCard(
                 item = item,
                 onEditButton = { onEditButton(item) },

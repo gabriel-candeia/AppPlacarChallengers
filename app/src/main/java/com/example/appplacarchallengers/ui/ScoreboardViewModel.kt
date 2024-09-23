@@ -1,11 +1,10 @@
 package com.example.appplacarchallengers.ui
 
-import android.util.Log
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.appplacarchallengers.R
-import com.example.appplacarchallengers.data.DataSource
+import com.example.appplacarchallengers.data.DialogState
 import com.example.appplacarchallengers.data.Scoreboard
 import com.example.appplacarchallengers.data.db.ScoreboardDao
 import com.example.appplacarchallengers.data.db.ScoreboardEntity
@@ -28,7 +27,6 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
     val allScoreboards: StateFlow<List<ScoreboardEntity>> = _allScoreboards.asStateFlow()
 
     var config: SnapshotStateMap<Int,String> = SnapshotStateMap<Int,String>()
-
 
     fun getConfig(key: Int): String {
         return config.get(key) ?: ""
@@ -55,10 +53,9 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
     }
 
     fun createScoreboard() : Boolean {
-        DataSource.configurationOptions.forEach({ if(config.get(it)==null) return false})
         _scoreboardStack.clear()
         _scoreboardState.update { currentState ->
-            val newState = Scoreboard()
+            val newState = Scoreboard(currentState.timer,null,totalSets = currentState.totalSets, gamesToSet = currentState.gamesToSet)
             newState.matchName = getConfig(R.string.TextField_match_name)
             newState.playerNames = arrayOf(
                 arrayOf(getConfig(R.string.TextField_player_a1),getConfig(R.string.TextField_player_a2)),
@@ -69,13 +66,7 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
         return true
     }
 
-    fun getPoints(team: Int): String {
-        return _scoreboardState.value.getPoints(team)
-    }
-
-    fun score(team: Int) : Boolean{
-        if(_scoreboardState.value.scoringStrategy is EndgameStrategy)
-            return false
+    fun score(team: Int) : DialogState {
         _scoreboardStack.add(_scoreboardState.value)
         var switched = _scoreboardState.value.switched
         _scoreboardState.update { currentState ->
@@ -83,7 +74,9 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
             newState.score(team)
             newState
         }
-        return switched != _scoreboardState.value.switched
+        if(_scoreboardState.value.scoringStrategy is EndgameStrategy)
+            return DialogState.Endgame
+        return if(switched != _scoreboardState.value.switched) DialogState.ChangeEnds else DialogState.NoDialog
     }
 
     fun undo() {
@@ -95,7 +88,14 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
         _scoreboardStack.removeAt(_scoreboardStack.size-1)
     }
 
-    fun saveScoreboard() {
+    fun saveScoreboard(timer : Long) {
+        if(_scoreboardState.value.timer != null) {
+            _scoreboardState.update  { currentState ->
+                val newState = currentState.copy()
+                newState.timer = timer
+                newState
+            }
+        }
         viewModelScope.launch {
             val scoreboardEntity = _scoreboardState.value.toScoreboardEntity()
             scoreboardDao.insertScoreboard(scoreboardEntity)
@@ -115,11 +115,13 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
         }
     }
 
-    fun loadScoreboard(it: ScoreboardEntity) {
+    fun loadScoreboard(it: ScoreboardEntity, timerViewModel: TimerViewModel) {
+        resetAll()
         _scoreboardState.update { currentState ->
             val newState = Scoreboard()
             newState.matchName = it.matchName
-            newState.hasTimer = it.hasTimer
+            newState.timer = it.timer
+            timerViewModel.setTimer(newState.timer?:0)
             //date
 
             newState.gamesToSet = it.gamesToSet
@@ -136,24 +138,17 @@ class ScoreboardViewModel(val scoreboardDao: ScoreboardDao) : ViewModel() {
             newState.winningTeam = it.winningTeam
 
             newState.scoringStrategy = it.scoringStrategy.toStrategy()
+            newState.server = it.server
             newState
         }
     }
+
+    fun toogleTimer() {
+        _scoreboardState.update { currentState ->
+            val newState = currentState.copy()
+            newState.timer = if(newState.timer==null) 0 else null
+            newState
+        }
+    }
+
 }
-
-/*
-
- matchName = matchName,
-        hasTimer = hasTimer,
-        date = 0,
-        gamesToSet = gamesToSet,
-        totalSets = totalSets,
-        playerNames = playerNames[0].toList() + playerNames[1].toList(),
-        points = points.toList(),
-        games = games.toList(),
-        sets = sets.toList(),
-        setOverviewA = setOverview[0] + ongoingSetOverview(0),
-        setOverviewB = setOverview[1] + ongoingSetOverview(1),
-        switched = switched,
-        winningTeam = winningTeam
- */

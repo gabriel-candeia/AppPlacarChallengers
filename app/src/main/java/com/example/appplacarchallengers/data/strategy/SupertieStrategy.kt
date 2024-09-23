@@ -11,8 +11,12 @@ class SupertieStrategy : ScoringStrategy {
         scoreboard.points[time]++;
 
         // Change ends
-        if ((scoreboard.points[time] + scoreboard.points[1-time])%5 == 1)
+        if ((scoreboard.points[time] + scoreboard.points[1-time])%4 == 1)
             scoreboard.switched = 1 - scoreboard.switched
+
+        // Change server
+        if ((scoreboard.points[time] + scoreboard.points[1-time])%2 == 1)
+            scoreboard.server = 1 - scoreboard.server
 
         if (scoreboard.points[time] < 10 || scoreboard.points[time] - scoreboard.points[1-time] < 2)
             return this

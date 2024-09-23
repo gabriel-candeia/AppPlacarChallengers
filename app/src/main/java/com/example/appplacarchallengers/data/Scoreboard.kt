@@ -7,9 +7,8 @@ import com.example.appplacarchallengers.data.strategy.SupertieStrategy
 import com.example.appplacarchallengers.data.strategy.TiebreakerStrategy
 import java.io.Serializable
 import java.util.Date
-import kotlin.reflect.typeOf
 
-class Scoreboard(var hasTimer: Boolean? = null, var date: Date? = null, var gamesToSet: Int = 6, var totalSets: Int = 5) : Serializable {
+class Scoreboard(var timer: Long? = null, var date: Date? = null, var gamesToSet: Int = 6, var totalSets: Int = 5) : Serializable {
     var matchName: String = ""
     var scoringStrategy: ScoringStrategy = NormalStrategy()
     var teamNames: Array<String> = arrayOf("","")
@@ -21,7 +20,9 @@ class Scoreboard(var hasTimer: Boolean? = null, var date: Date? = null, var game
     var setOverview: Array<MutableList<Pair<Int, Int>>> = arrayOf(mutableListOf<Pair<Int,Int>>(),mutableListOf<Pair<Int,Int>>())
 
     var switched: Int = 0
+    var server: Int = 0
     var winningTeam: Int? = null
+
 
     fun gameEnded(): Boolean {
         return scoringStrategy is EndgameStrategy
@@ -49,7 +50,7 @@ class Scoreboard(var hasTimer: Boolean? = null, var date: Date? = null, var game
     }
 
     fun copy() : Scoreboard {
-        var answ: Scoreboard = Scoreboard(hasTimer, date, gamesToSet, totalSets)
+        var answ: Scoreboard = Scoreboard(timer, date, gamesToSet, totalSets)
         answ.matchName = matchName
         answ.scoringStrategy = scoringStrategy
         answ.points = points.copyOf()
@@ -59,8 +60,7 @@ class Scoreboard(var hasTimer: Boolean? = null, var date: Date? = null, var game
         answ.setOverview = arrayOf(setOverview[0].toMutableList(),setOverview[1].toMutableList())
         answ.switched = switched
         answ.winningTeam = winningTeam
-        answ.totalSets = totalSets
-        answ.gamesToSet = gamesToSet
+        answ.server = server
         return answ
     }
 

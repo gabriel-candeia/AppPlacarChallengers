@@ -1,6 +1,5 @@
 package com.example.appplacarchallengers
 
-//import com.example.appplacarchallengers.data.ScoreboardViewModelFactory
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -9,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -37,7 +37,7 @@ fun ChallengersApp(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-
+        containerColor = Color.Transparent
     ) { innerPadding ->
         val uiState by viewModel.scoreboardState.collectAsState()
         val savedScoreboardState by viewModel.allScoreboards.collectAsState()

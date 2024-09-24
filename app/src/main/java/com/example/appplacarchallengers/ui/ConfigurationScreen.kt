@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.appplacarchallengers.R
-import com.example.appplacarchallengers.components.AppButton
+import com.example.appplacarchallengers.componentsGlobal.AppButton
 import com.example.appplacarchallengers.data.DataSource
 
 

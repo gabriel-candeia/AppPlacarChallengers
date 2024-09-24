@@ -11,7 +11,7 @@ import androidx.room.RoomDatabase
 )
 abstract class ScoreboardDatabase : RoomDatabase() {
 
-    abstract fun itemDao(): ScoreboardDao
+    abstract fun scoreboardDao(): ScoreboardDao
 
     companion object {
         @Volatile

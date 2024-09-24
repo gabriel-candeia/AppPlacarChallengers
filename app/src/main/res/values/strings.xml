@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AppPlacarChallengers</string>
+    <string name="app_name">Challengers</string>
     <string name="button_new_match">New Match</string>
     <string name="button_past_matches">Past Matches</string>
     <string name="description_app_logo" />
